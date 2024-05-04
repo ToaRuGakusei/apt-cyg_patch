@@ -1,0 +1,26 @@
+--- apt-cyg.orig    2013-11-17 17:38:04.542081900 +0900
++++ apt-cyg 2013-11-17 17:55:06.330524900 +0900
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-
++export LANG=C
+ # apt-cyg: install tool for cygwin similar to debian apt-get
+ #
+ # Copyright (C) 2005-9, Stephen Jungels
+@@ -373,8 +373,16 @@
+       exit 1
+     fi
+  
++    opts=
+     echo "Unpacking..."
+-    cat $file | bunzip2 | tar > "/etc/setup/$pkg.lst" xvf - -C /
++    if [ `echo $file | grep '\.bz2$'` ]; then
++      opts="--bzip2"
++    else
++      if [ `echo $file | grep '\.xz$'` ]; then
++        opts="--xz"
++      fi
++    fi
++    cat $file | tar $opts > "/etc/setup/$pkg.lst" -xvf - -C /
+     gzip -f "/etc/setup/$pkg.lst"
+     cd ../..
